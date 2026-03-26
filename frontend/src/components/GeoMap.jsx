@@ -28,10 +28,26 @@ export default function GeoMap() {
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       });
 
-      const map = L.map(mapRef.current).setView([25, 60], 3);
+      const map = L.map(mapRef.current, { minZoom: 4 }).setView([22.5937, 78.9629], 5);
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri...',
       }).addTo(map);
+
+      // Add India borders GeoJSON
+      fetch('https://raw.githubusercontent.com/Subhash9325/GeoJson-Data-of-Indian-States/master/Indian_States')
+        .then(res => res.json())
+        .then(data => {
+          L.geoJSON(data, {
+            style: {
+              color: '#ffffff', // clear borders
+              weight: 1.5,
+              opacity: 0.7,
+              fillColor: '#818cf8', // light indigo fill
+              fillOpacity: 0.05
+            }
+          }).addTo(map);
+        })
+        .catch(err => console.error('Failed to load Indian borders:', err));
 
       const typeColors = { conflict: '#ef4444', tension: '#f59e0b', diplomacy: '#3b82f6' };
 

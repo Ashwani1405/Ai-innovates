@@ -20,8 +20,8 @@ class NERExtractor:
             return self._fallback_extract(text)
 
         prompt = f"""Extract named entities from this text. Return ONLY a JSON list of [entity, type] pairs.
-Types: GPE (country/city), PERSON, ORG, LOC, NORP (nationality/group).
-Example: [["India", "GPE"], ["Modi", "PERSON"]]
+Types: GPE (country/city/state), PERSON (politician/leader), ORG (agency/party), LOC (location/border), STATE, DISTRICT, REGIONAL_PARTY, UNION_MINISTRY.
+Example: [["India", "GPE"], ["Narendra Modi", "PERSON"], ["Uttar Pradesh", "STATE"], ["BJP", "REGIONAL_PARTY"], ["Ministry of Defence", "UNION_MINISTRY"]]
 
 Text: "{text[:500]}"
 Respond with ONLY the JSON array, no markdown."""

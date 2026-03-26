@@ -88,17 +88,24 @@ def ingest_gdelt():
     """Trigger GDELT ingestion pipeline."""
     try:
         from ingestion.gdelt_fetcher import GDELTFetcher
+        from ingestion.rss_fetcher import RSSFetcher
         from nlp.ner import NERExtractor
         from nlp.relations import RelationExtractor
         from nlp.embedder import TextEmbedder
 
         fetcher = GDELTFetcher()
+        rss_fetcher = RSSFetcher()
         ner = NERExtractor()
         rel_ext = RelationExtractor()
         embedder = TextEmbedder()
         writer = _get_writer()
 
         articles = fetcher.fetch_recent_articles(["India", "China", "Geopolitics", "Border"], max_records=10)
+        
+        # Add hyper-local Indian RSS data
+        rss_articles = rss_fetcher.fetch_rss_articles(max_records=5)
+        articles.extend(rss_articles)
+        
         ingested = 0
 
         for art in articles:
@@ -131,11 +138,18 @@ def live_events():
     """Returns recent GDELT events for the Event Feed."""
     try:
         from ingestion.gdelt_fetcher import GDELTFetcher
+        from ingestion.rss_fetcher import RSSFetcher
+        
         fetcher = GDELTFetcher()
+        rss_fetcher = RSSFetcher()
         articles = fetcher.fetch_recent_articles(
             ["India", "China", "Russia", "NATO", "Geopolitics", "Trade", "Border"],
-            max_records=15
+            max_records=10
         )
+        
+        rss_articles = rss_fetcher.fetch_rss_articles(max_records=5)
+        articles.extend(rss_articles)
+        
         return {"events": articles}
     except Exception as e:
         logger.error(f"/events error: {e}")
