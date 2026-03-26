@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MapPin } from 'lucide-react';
+import 'leaflet/dist/leaflet.css';
 
 export default function GeoMap() {
   const mapRef = useRef(null);
@@ -28,8 +29,8 @@ export default function GeoMap() {
       });
 
       const map = L.map(mapRef.current).setView([25, 60], 3);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; CARTO',
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
       }).addTo(map);
 
       const typeColors = { conflict: '#ef4444', tension: '#f59e0b', diplomacy: '#3b82f6' };
@@ -47,6 +48,11 @@ export default function GeoMap() {
       });
 
       mapInstanceRef.current = map;
+
+      // Fix gray tile issue by invalidating size after render
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 250);
     });
 
     return () => {
@@ -72,7 +78,7 @@ export default function GeoMap() {
           ))}
         </div>
       </div>
-      <div ref={mapRef} style={{ width: '100%', height: '300px' }} />
+      <div ref={mapRef} className="w-full h-[450px]" />
     </div>
   );
 }
