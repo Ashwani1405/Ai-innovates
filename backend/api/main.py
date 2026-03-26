@@ -173,6 +173,100 @@ def geo_events():
     ]
     return {"hotspots": hotspots}
 
+# ── Intelligence Panel Endpoints (Real Data) ─────
+
+@app.get("/disasters")
+def disasters():
+    """Returns real disaster data from USGS + weather APIs."""
+    try:
+        from intelligence.disaster_fetcher import DisasterFetcher
+        fetcher = DisasterFetcher()
+        events = fetcher.get_all_disasters()
+        return {"events": events, "source": "USGS + OpenMeteo"}
+    except Exception as e:
+        logger.error(f"/disasters error: {e}")
+        return {"events": [], "source": "error"}
+
+@app.get("/economic")
+def economic():
+    """Returns real economic signals from exchange rate + commodity APIs."""
+    try:
+        from intelligence.economic_fetcher import EconomicFetcher
+        fetcher = EconomicFetcher()
+        signals = fetcher.get_economic_signals()
+        return {"signals": signals, "source": "ExchangeRate-API + commodity APIs"}
+    except Exception as e:
+        logger.error(f"/economic error: {e}")
+        return {"signals": [], "source": "error"}
+
+@app.get("/state-volatility")
+def state_volatility():
+    """Returns LLM-computed state volatility scores from real news analysis."""
+    try:
+        from intelligence.analyzer import IntelligenceAnalyzer
+        from ingestion.gdelt_fetcher import GDELTFetcher
+        from ingestion.rss_fetcher import RSSFetcher
+
+        # Fetch real news
+        gdelt = GDELTFetcher()
+        rss = RSSFetcher()
+        articles = gdelt.fetch_recent_articles(["India", "state", "protest", "violence", "security"], max_records=15)
+        articles.extend(rss.fetch_rss_articles(max_records=10))
+
+        analyzer = IntelligenceAnalyzer()
+        states = analyzer.compute_state_volatility(articles)
+        return {"states": states, "source": "LLM analysis of GDELT + RSS headlines"}
+    except Exception as e:
+        logger.error(f"/state-volatility error: {e}")
+        return {"states": [], "source": "error"}
+
+@app.get("/border-posture")
+def border_posture():
+    """Returns LLM-computed border posture from real news analysis."""
+    try:
+        from intelligence.analyzer import IntelligenceAnalyzer
+        from ingestion.gdelt_fetcher import GDELTFetcher
+
+        gdelt = GDELTFetcher()
+        articles = gdelt.fetch_recent_articles(["India", "border", "LAC", "LOC", "military", "navy", "Indian Ocean"], max_records=15)
+
+        analyzer = IntelligenceAnalyzer()
+        theaters = analyzer.compute_border_posture(articles)
+        return {"theaters": theaters, "source": "LLM analysis of GDELT headlines"}
+    except Exception as e:
+        logger.error(f"/border-posture error: {e}")
+        return {"theaters": [], "source": "error"}
+
+@app.get("/risk-score")
+def risk_score():
+    """Returns aggregate national risk score computed from all intelligence sources."""
+    try:
+        from intelligence.analyzer import IntelligenceAnalyzer
+        from intelligence.disaster_fetcher import DisasterFetcher
+        from intelligence.economic_fetcher import EconomicFetcher
+        from ingestion.gdelt_fetcher import GDELTFetcher
+        from ingestion.rss_fetcher import RSSFetcher
+
+        gdelt = GDELTFetcher()
+        rss = RSSFetcher()
+        articles = gdelt.fetch_recent_articles(["India"], max_records=10)
+        articles.extend(rss.fetch_rss_articles(max_records=5))
+
+        analyzer = IntelligenceAnalyzer()
+        disaster_fetcher = DisasterFetcher()
+        economic_fetcher = EconomicFetcher()
+
+        disasters_data = disaster_fetcher.get_all_disasters()
+        economic_data = economic_fetcher.get_economic_signals()
+        states_data = analyzer.compute_state_volatility(articles)
+        borders_data = analyzer.compute_border_posture(articles)
+
+        result = analyzer.compute_risk_score(disasters_data, economic_data, states_data, borders_data)
+        return result
+    except Exception as e:
+        logger.error(f"/risk-score error: {e}")
+        return {"score": 45, "trend": "stable", "source": "fallback"}
+
 def _demo_graph_elements():
     """Fallback demo graph if Neo4j has no data."""
     nodes = [
