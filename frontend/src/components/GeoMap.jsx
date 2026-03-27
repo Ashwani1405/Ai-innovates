@@ -87,17 +87,108 @@ export default function GeoMap() {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri...',
       }).addTo(map);
 
-      // Add India borders GeoJSON
+      // India state detail data for hover cards
+      const stateData = {
+        'Andhra Pradesh': { capital: 'Amaravati', pop: '52.2M', density: '308/km²', area: '162,975 km²' },
+        'Arunachal Pradesh': { capital: 'Itanagar', pop: '1.6M', density: '17/km²', area: '83,743 km²' },
+        'Assam': { capital: 'Dispur', pop: '35.6M', density: '397/km²', area: '78,438 km²' },
+        'Bihar': { capital: 'Patna', pop: '124.8M', density: '1,106/km²', area: '94,163 km²' },
+        'Chhattisgarh': { capital: 'Raipur', pop: '29.4M', density: '189/km²', area: '135,194 km²' },
+        'Goa': { capital: 'Panaji', pop: '1.5M', density: '394/km²', area: '3,702 km²' },
+        'Gujarat': { capital: 'Gandhinagar', pop: '63.9M', density: '308/km²', area: '196,024 km²' },
+        'Haryana': { capital: 'Chandigarh', pop: '28.9M', density: '573/km²', area: '44,212 km²' },
+        'Himachal Pradesh': { capital: 'Shimla', pop: '7.3M', density: '123/km²', area: '55,673 km²' },
+        'Jharkhand': { capital: 'Ranchi', pop: '38.6M', density: '414/km²', area: '79,710 km²' },
+        'Karnataka': { capital: 'Bengaluru', pop: '67.0M', density: '319/km²', area: '191,791 km²' },
+        'Kerala': { capital: 'Thiruvananthapuram', pop: '35.6M', density: '860/km²', area: '38,863 km²' },
+        'Madhya Pradesh': { capital: 'Bhopal', pop: '85.4M', density: '236/km²', area: '308,245 km²' },
+        'Maharashtra': { capital: 'Mumbai', pop: '123.2M', density: '365/km²', area: '307,713 km²' },
+        'Manipur': { capital: 'Imphal', pop: '3.1M', density: '128/km²', area: '22,327 km²' },
+        'Meghalaya': { capital: 'Shillong', pop: '3.3M', density: '132/km²', area: '22,429 km²' },
+        'Mizoram': { capital: 'Aizawl', pop: '1.2M', density: '52/km²', area: '21,081 km²' },
+        'Nagaland': { capital: 'Kohima', pop: '2.2M', density: '119/km²', area: '16,579 km²' },
+        'Odisha': { capital: 'Bhubaneswar', pop: '46.4M', density: '270/km²', area: '155,707 km²' },
+        'Punjab': { capital: 'Chandigarh', pop: '30.1M', density: '551/km²', area: '50,362 km²' },
+        'Rajasthan': { capital: 'Jaipur', pop: '79.5M', density: '200/km²', area: '342,239 km²' },
+        'Sikkim': { capital: 'Gangtok', pop: '0.7M', density: '86/km²', area: '7,096 km²' },
+        'Tamil Nadu': { capital: 'Chennai', pop: '77.8M', density: '555/km²', area: '130,058 km²' },
+        'Telangana': { capital: 'Hyderabad', pop: '39.0M', density: '312/km²', area: '112,077 km²' },
+        'Tripura': { capital: 'Agartala', pop: '4.2M', density: '350/km²', area: '10,486 km²' },
+        'Uttar Pradesh': { capital: 'Lucknow', pop: '231.5M', density: '829/km²', area: '240,928 km²' },
+        'Uttarakhand': { capital: 'Dehradun', pop: '11.3M', density: '189/km²', area: '53,483 km²' },
+        'West Bengal': { capital: 'Kolkata', pop: '99.6M', density: '1,029/km²', area: '88,752 km²' },
+        'Jammu and Kashmir': { capital: 'Srinagar', pop: '14.9M', density: '56/km²', area: '222,236 km²' },
+        'Ladakh': { capital: 'Leh', pop: '0.3M', density: '3/km²', area: '59,146 km²' },
+        'Delhi': { capital: 'New Delhi', pop: '20.0M', density: '11,320/km²', area: '1,484 km²' },
+        'Chandigarh': { capital: 'Chandigarh', pop: '1.2M', density: '9,252/km²', area: '114 km²' },
+      };
+
+      // Add India state borders with hover interaction
       fetch('https://raw.githubusercontent.com/Subhash9325/GeoJson-Data-of-Indian-States/master/Indian_States')
         .then(res => res.json())
-        .then(data => {
-          L.geoJSON(data, {
+        .then(geoData => {
+          L.geoJSON(geoData, {
             style: {
-              color: '#ffffff', // clear borders
-              weight: 1.5,
-              opacity: 0.7,
-              fillColor: '#818cf8', // light indigo fill
-              fillOpacity: 0.05
+              color: '#38bdf8',
+              weight: 1,
+              opacity: 0.35,
+              fillColor: '#0ea5e9',
+              fillOpacity: 0.03,
+              dashArray: '',
+            },
+            onEachFeature: (feature, layer) => {
+              const name = feature.properties.NAME_1 || feature.properties.name || 'Unknown';
+              const info = stateData[name] || { capital: '--', pop: '--', density: '--', area: '--' };
+              
+              layer.on({
+                mouseover: (e) => {
+                  const lyr = e.target;
+                  lyr.setStyle({
+                    weight: 2.5,
+                    color: '#38bdf8',
+                    opacity: 0.9,
+                    fillOpacity: 0.12,
+                  });
+                  lyr.bringToFront();
+                  // Don't bring hotspot markers to back
+                },
+                mouseout: (e) => {
+                  const lyr = e.target;
+                  lyr.setStyle({
+                    weight: 1,
+                    color: '#38bdf8',
+                    opacity: 0.35,
+                    fillOpacity: 0.03,
+                  });
+                },
+              });
+
+              const popupContent = `
+                <div style="font-family: 'JetBrains Mono', monospace; min-width: 180px;">
+                  <div style="font-size: 12px; font-weight: 700; color: #f1f5f9; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid #1e293b; padding-bottom: 6px; margin-bottom: 8px;">${name}</div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; font-size: 10px;">
+                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">Capital</div>
+                    <div style="color: #e2e8f0; text-align: right; font-weight: 600;">${info.capital}</div>
+                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">Population</div>
+                    <div style="color: #e2e8f0; text-align: right; font-weight: 600;">${info.pop}</div>
+                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">Density</div>
+                    <div style="color: #e2e8f0; text-align: right; font-weight: 600;">${info.density}</div>
+                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">Area</div>
+                    <div style="color: #e2e8f0; text-align: right; font-weight: 600;">${info.area}</div>
+                  </div>
+                </div>
+              `;
+              layer.bindPopup(popupContent, {
+                className: 'state-popup',
+                closeButton: false,
+                offset: [0, -5],
+              });
+              layer.on('mouseover', (e) => {
+                layer.openPopup(e.latlng);
+              });
+              layer.on('mouseout', () => {
+                layer.closePopup();
+              });
             }
           }).addTo(map);
         })
@@ -105,14 +196,19 @@ export default function GeoMap() {
 
       const typeColors = { conflict: '#ef4444', tension: '#f59e0b', diplomacy: '#3b82f6' };
 
+      // Create a custom pane so hotspots render ABOVE the GeoJSON polygons
+      map.createPane('hotspots');
+      map.getPane('hotspots').style.zIndex = 650;
+
       hotspots.forEach(h => {
         const color = typeColors[h.type] || '#6366f1';
         const circleMarker = L.circleMarker([h.lat, h.lng], {
           radius: 8,
           fillColor: color,
-          color: '#1e293b',
+          color: '#0f172a',
           weight: 2,
-          fillOpacity: 0.85,
+          fillOpacity: 0.9,
+          pane: 'hotspots',
         }).addTo(map);
         circleMarker.bindPopup(`<b>${h.label}</b><br/>${h.desc}`);
       });
@@ -177,7 +273,7 @@ export default function GeoMap() {
 
   return (
     <div className="border border-slate-800 bg-[#060b18] overflow-hidden relative w-full h-full lg:min-h-[600px] z-0">
-      <div className="absolute top-3 left-3 z-[1000] bg-black/80 backdrop-blur p-2 border border-slate-800 pointer-events-auto">
+      <div className="absolute bottom-3 left-3 z-[1000] bg-black/80 backdrop-blur p-2 border border-slate-800 pointer-events-auto">
         <div className="flex items-center gap-1.5 pb-1 border-b border-slate-800">
           <MapPin className="w-3.5 h-3.5 text-red-500" />
           <h3 className="font-bold text-slate-300 text-[9px] tracking-widest uppercase">GEO-HOTSPOTS & TRAFFIC</h3>
