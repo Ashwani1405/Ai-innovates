@@ -181,34 +181,40 @@ def air_traffic():
     """Proxies OpenSky Network API with OAuth2 authentication."""
     import requests
     try:
+        ua_headers = {"User-Agent": "BharatIntelligenceEngine/1.0 (India Hackathon Pitch)"}
+        
         # Step 1: Get OAuth2 access token
         token_url = "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token"
-        token_res = requests.post(token_url, data={
+        token_res = requests.post(token_url, headers=ua_headers, data={
             "grant_type": "client_credentials",
             "client_id": "jha.ashwanikumar006@gmail.com-api-client",
             "client_secret": "K05V5SLVobGgVYi9Dlf7BlXezrgST0Z1"
-        }, timeout=10)
+        }, timeout=15)
 
         if token_res.status_code != 200:
-            logger.error(f"OpenSky token error: {token_res.status_code} {token_res.text}")
-            return {"states": []}
+            return {"states": [], "error": f"Token failed: {token_res.status_code} - {token_res.text}"}
 
         access_token = token_res.json().get("access_token")
 
         # Step 2: Fetch flight data with the token
+        res_headers = {
+            "Authorization": f"Bearer {access_token}",
+            "User-Agent": "BharatIntelligenceEngine/1.0 (India Hackathon Pitch)"
+        }
         res = requests.get(
             "https://opensky-network.org/api/states/all",
             params={"lamin": 6.7, "lomin": 68.1, "lamax": 35.5, "lomax": 97.4},
-            headers={"Authorization": f"Bearer {access_token}"},
-            timeout=10
+            headers=res_headers,
+            timeout=15
         )
         if res.status_code == 200:
-            return res.json()
-        logger.error(f"OpenSky returned {res.status_code}")
-        return {"states": []}
+            data = res.json()
+            data["error"] = None # mark success
+            return data
+            
+        return {"states": [], "error": f"Flight API failed: {res.status_code} - {res.text}"}
     except Exception as e:
-        logger.error(f"/air-traffic error: {e}")
-        return {"states": []}
+        return {"states": [], "error": f"Exception: {str(e)}"}
 
 # ── Intelligence Panel Endpoints (Real Data) ─────
 
