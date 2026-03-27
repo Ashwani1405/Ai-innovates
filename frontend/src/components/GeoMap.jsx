@@ -139,7 +139,7 @@ export default function GeoMap() {
               dashArray: '',
             },
             onEachFeature: (feature, layer) => {
-              const name = feature.properties.NAME_1 || feature.properties.name || 'Unknown';
+              const name = feature.properties.NAME_1 || feature.properties.name || feature.properties.NAME || feature.properties.ST_NM || 'Unknown';
               const info = stateData[name] || { capital: '--', pop: '--', density: '--', area: '--' };
               
               layer.on({
