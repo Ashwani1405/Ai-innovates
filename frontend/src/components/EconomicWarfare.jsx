@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IndianRupee } from 'lucide-react';
+import { API_BASE } from '../config';
 
 const typeColors = {
   commodity: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
@@ -13,7 +14,7 @@ export default function EconomicWarfare() {
   const [source, setSource] = useState('loading...');
 
   useEffect(() => {
-    fetch('http://localhost:8000/economic')
+    fetch(`${API_BASE}/economic`)
       .then(res => res.json())
       .then(data => {
         setSignals(data.signals || []);

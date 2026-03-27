@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Crosshair, Plane, Ship, ShieldAlert } from 'lucide-react';
+import { API_BASE } from '../config';
 
 const iconMap = { army: ShieldAlert, air: Plane, naval: Ship };
 
@@ -15,7 +16,7 @@ export default function BorderPosture() {
   const [source, setSource] = useState('loading...');
 
   useEffect(() => {
-    fetch('http://localhost:8000/border-posture')
+    fetch(`${API_BASE}/border-posture`)
       .then(res => res.json())
       .then(data => {
         setTheaters(data.theaters || []);

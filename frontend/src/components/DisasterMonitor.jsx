@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CloudLightning, Flame, Waves, Mountain, AlertTriangle } from 'lucide-react';
+import { API_BASE } from '../config';
 
 const iconMap = {
   earthquake: Mountain,
@@ -25,7 +26,7 @@ export default function DisasterMonitor() {
   const [source, setSource] = useState('loading...');
 
   useEffect(() => {
-    fetch('http://localhost:8000/disasters')
+    fetch(`${API_BASE}/disasters`)
       .then(res => res.json())
       .then(data => {
         setEvents(data.events || []);

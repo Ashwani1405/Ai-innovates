@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { BrainCircuit, Activity, Database, Zap, Tv } from 'lucide-react'
+import { API_BASE } from './config'
 import GraphExplorer from './components/GraphExplorer'
 import ChatPanel from './components/ChatPanel'
 import TvPanel from './components/TvPanel'
@@ -18,7 +19,7 @@ function App() {
   const [isTvOpen, setIsTvOpen] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:8000/graph')
+    fetch(`${API_BASE}/graph`)
       .then(res => res.json())
       .then(data => { setGraphData(data); setGraphLoading(false); })
       .catch(err => { console.error("Graph fetch error:", err); setGraphLoading(false); });

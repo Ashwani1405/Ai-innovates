@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { API_BASE } from '../config';
 
 export default function ChatPanel() {
   const [query, setQuery] = useState('');
@@ -18,7 +19,7 @@ export default function ChatPanel() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:8000/query', {
+      const res = await fetch(`${API_BASE}/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userMsg })

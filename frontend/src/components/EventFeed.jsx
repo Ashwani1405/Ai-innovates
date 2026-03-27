@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Activity, Globe, ExternalLink } from 'lucide-react';
+import { API_BASE } from '../config';
 
 export default function EventFeed() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/events')
+    fetch(`${API_BASE}/events`)
       .then(res => res.json())
       .then(data => {
         setEvents(data.events || []);

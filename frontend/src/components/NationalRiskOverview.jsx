@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { API_BASE } from '../config';
 
 const RISK_LEVELS = [
   { max: 30, label: 'LOW', color: '#22c55e' },
@@ -20,7 +21,7 @@ export default function NationalRiskOverview() {
   const [source, setSource] = useState('loading...');
 
   useEffect(() => {
-    fetch('http://localhost:8000/risk-score')
+    fetch(`${API_BASE}/risk-score`)
       .then(res => res.json())
       .then(data => {
         setScore(data.score || 45);

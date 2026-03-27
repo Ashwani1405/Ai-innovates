@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart3, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { API_BASE } from '../config';
 
 function getBarColor(score) {
   if (score >= 70) return 'bg-red-500';
@@ -20,7 +21,7 @@ export default function StateVolatility() {
   const [source, setSource] = useState('loading...');
 
   useEffect(() => {
-    fetch('http://localhost:8000/state-volatility')
+    fetch(`${API_BASE}/state-volatility`)
       .then(res => res.json())
       .then(data => {
         setStates(data.states || []);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MapPin, Plane, X } from 'lucide-react';
+import { API_BASE } from '../config';
 import 'leaflet/dist/leaflet.css';
 
 export default function GeoMap() {
@@ -12,7 +13,7 @@ export default function GeoMap() {
   const [flightImage, setFlightImage] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/geo')
+    fetch(`${API_BASE}/geo`)
       .then(res => res.json())
       .then(data => setHotspots(data.hotspots || []))
       .catch(() => setHotspots([]));
@@ -23,7 +24,7 @@ export default function GeoMap() {
     // Poll OpenSky via backend proxy (authenticated — 4000 credits/day)
     const fetchFlights = async () => {
       try {
-        const res = await fetch('http://localhost:8000/air-traffic', {
+        const res = await fetch(`${API_BASE}/air-traffic`, {
           cache: 'no-store'
         });
         const data = await res.json();
