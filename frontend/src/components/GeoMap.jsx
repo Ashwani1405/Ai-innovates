@@ -21,14 +21,14 @@ export default function GeoMap() {
 
   // Poll for flights
   useEffect(() => {
-    // Poll OpenSky via backend proxy (authenticated — 4000 credits/day)
+    // Poll OpenSky directly from the browser (bypasses cloud IP bans)
     const fetchFlights = async () => {
       try {
-        const res = await fetch(`${API_BASE}/air-traffic`, {
+        const res = await fetch('https://opensky-network.org/api/states/all?lamin=6.7&lomin=68.1&lamax=35.5&lomax=97.4', {
           cache: 'no-store'
         });
         const data = await res.json();
-        if (data && data.states) {
+        if (data && data.states && data.states.length > 0) {
           const parsed = data.states.map(s => ({
             icao24: s[0],
             callsign: s[1] ? s[1].trim() : 'UNKNOWN',
@@ -48,7 +48,7 @@ export default function GeoMap() {
     };
 
     fetchFlights();
-    const interval = setInterval(fetchFlights, 30000); // 30s intervals (saves API credits)
+    const interval = setInterval(fetchFlights, 30000); // 30s intervals
     return () => clearInterval(interval);
   }, []);
 
