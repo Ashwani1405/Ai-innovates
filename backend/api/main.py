@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import sys
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -172,6 +175,40 @@ def geo_events():
         {"lat": 39.9, "lng": 116.4, "label": "Beijing", "type": "diplomacy", "desc": "Chinese strategic command"},
     ]
     return {"hotspots": hotspots}
+
+@app.get("/air-traffic")
+def air_traffic():
+    """Proxies OpenSky Network API with OAuth2 authentication."""
+    import requests
+    try:
+        # Step 1: Get OAuth2 access token
+        token_url = "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token"
+        token_res = requests.post(token_url, data={
+            "grant_type": "client_credentials",
+            "client_id": "jha.ashwanikumar006@gmail.com-api-client",
+            "client_secret": "K05V5SLVobGgVYi9Dlf7BlXezrgST0Z1"
+        }, timeout=10)
+
+        if token_res.status_code != 200:
+            logger.error(f"OpenSky token error: {token_res.status_code} {token_res.text}")
+            return {"states": []}
+
+        access_token = token_res.json().get("access_token")
+
+        # Step 2: Fetch flight data with the token
+        res = requests.get(
+            "https://opensky-network.org/api/states/all",
+            params={"lamin": 6.7, "lomin": 68.1, "lamax": 35.5, "lomax": 97.4},
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=10
+        )
+        if res.status_code == 200:
+            return res.json()
+        logger.error(f"OpenSky returned {res.status_code}")
+        return {"states": []}
+    except Exception as e:
+        logger.error(f"/air-traffic error: {e}")
+        return {"states": []}
 
 # ── Intelligence Panel Endpoints (Real Data) ─────
 

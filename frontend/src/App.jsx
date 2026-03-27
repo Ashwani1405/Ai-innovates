@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { BrainCircuit, Activity, Database, Zap } from 'lucide-react'
+import { BrainCircuit, Activity, Database, Zap, Tv } from 'lucide-react'
 import GraphExplorer from './components/GraphExplorer'
 import ChatPanel from './components/ChatPanel'
+import TvPanel from './components/TvPanel'
 import EventFeed from './components/EventFeed'
 import GeoMap from './components/GeoMap'
 import NationalRiskOverview from './components/NationalRiskOverview'
@@ -14,6 +15,7 @@ import DisasterMonitor from './components/DisasterMonitor'
 function App() {
   const [graphData, setGraphData] = useState({ elements: [] });
   const [graphLoading, setGraphLoading] = useState(true);
+  const [isTvOpen, setIsTvOpen] = useState(false);
 
   useEffect(() => {
     fetch('http://localhost:8000/graph')
@@ -38,13 +40,20 @@ function App() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-[10px] bg-slate-800/80 px-3 py-1.5 rounded-full text-slate-400 border border-slate-700">
+          <div className="flex items-center gap-2 text-[10px] bg-slate-800/80 px-3 py-1.5 rounded-full text-slate-400 border border-slate-700 hidden sm:flex">
             <Database className="w-3 h-3 text-emerald-400" />
             <span className="text-emerald-400 font-medium">Neo4j</span>
             <span className="text-slate-600">|</span>
             <Zap className="w-3 h-3 text-amber-400" />
             <span className="text-amber-400 font-medium">Groq LLaMA</span>
           </div>
+          <button 
+            onClick={() => setIsTvOpen(true)}
+            className="flex items-center gap-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg border border-slate-600 transition-colors shadow-lg"
+          >
+            <Tv className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="hidden sm:inline">LIVE TV</span>
+          </button>
           <div className="flex items-center gap-1.5 text-[10px] bg-emerald-500/10 px-3 py-1.5 rounded-full text-emerald-400 border border-emerald-500/20">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
             India Monitor
@@ -94,6 +103,9 @@ function App() {
           </div>
         </div>
       </main>
+
+      {/* Global TV Overlay */}
+      <TvPanel isOpen={isTvOpen} onClose={() => setIsTvOpen(false)} />
     </div>
   )
 }
