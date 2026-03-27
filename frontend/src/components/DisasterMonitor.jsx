@@ -15,10 +15,10 @@ const colorMap = {
   fire: 'text-orange-400',
 };
 const severityBadge = {
-  CRIT: 'text-red-400 bg-red-500/10 border-red-500/30',
-  HIGH: 'text-orange-400 bg-orange-500/10 border-orange-500/30',
-  MED: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30',
-  LOW: 'text-green-400 bg-green-500/10 border-green-500/30',
+  CRIT: 'text-red-500 bg-red-950/30 border border-red-900/50',
+  HIGH: 'text-orange-500 bg-orange-950/30 border border-orange-900/50',
+  MED: 'text-yellow-500 bg-yellow-950/30 border border-yellow-900/50',
+  LOW: 'text-emerald-500 bg-emerald-950/30 border border-emerald-900/50',
 };
 
 export default function DisasterMonitor() {
@@ -36,32 +36,31 @@ export default function DisasterMonitor() {
   }, []);
 
   return (
-    <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 backdrop-blur">
-      <div className="flex items-center justify-between mb-3">
+    <div className="bg-[#060b18] border border-slate-800 p-3">
+      <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
         <div className="flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-red-400" />
-          <h3 className="text-xs font-bold text-white uppercase tracking-wider">Disaster Cascade</h3>
+          <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
+          <h3 className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.15em]">Disaster Cascade</h3>
         </div>
-        <span className="text-[10px] text-slate-500">{events.length}</span>
+        <span className="text-[9px] text-slate-500 tracking-widest">{events.length} EVENTS</span>
       </div>
-      {events.length === 0 && <div className="text-xs text-slate-500 animate-pulse">Scanning USGS + weather APIs...</div>}
-      <div className="space-y-2">
+      {events.length === 0 && <div className="text-[10px] text-slate-500 animate-pulse tracking-widest">[ SCANNING USGS/WEATHER... ]</div>}
+      <div className="space-y-1.5">
         {events.map((e, i) => {
           const Icon = iconMap[e.type] || AlertTriangle;
           const color = colorMap[e.type] || 'text-slate-400';
           return (
-            <div key={i} className="flex items-start gap-2.5 bg-slate-800/50 rounded-lg px-3 py-2.5 border border-slate-700/50 hover:border-slate-600 transition-colors">
+            <div key={i} className="flex items-start gap-2.5 bg-slate-950 px-2 py-1.5 border border-slate-800/50 hover:bg-slate-900 transition-colors">
               <div className="mt-0.5 flex-shrink-0">
-                <Icon className={`w-4 h-4 ${color}`} />
+                <Icon className={`w-3.5 h-3.5 ${color}`} />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-xs text-white font-medium">{e.label}</div>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${severityBadge[e.severity] || severityBadge.MED}`}>
+                <div className="text-[10px] text-slate-300 font-bold uppercase tracking-wide">{e.label}</div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className={`text-[8px] font-bold px-1 py-0.5 tracking-widest border uppercase ${severityBadge[e.severity] || severityBadge.MED}`}>
                     {e.severity}
                   </span>
-                  <span className="text-[10px] text-slate-500">{e.signals} signals</span>
-                  <span className="text-[10px] text-slate-600">{e.time}</span>
+                  <span className="text-[8px] text-slate-500 uppercase tracking-widest">T-{e.timeStatus || 'UNKNOWN'}</span>
                   {e.source && <span className="text-[9px] text-slate-600">({e.source})</span>}
                 </div>
               </div>

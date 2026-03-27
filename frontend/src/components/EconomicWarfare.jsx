@@ -3,10 +3,10 @@ import { IndianRupee } from 'lucide-react';
 import { API_BASE } from '../config';
 
 const typeColors = {
-  commodity: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  currency: 'bg-red-500/20 text-red-400 border-red-500/30',
-  investment: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-  trade: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  commodity: 'bg-amber-950/30 text-amber-500 border-amber-900/50',
+  currency: 'bg-red-950/30 text-red-500 border-red-900/50',
+  investment: 'bg-purple-950/30 text-purple-500 border-purple-900/50',
+  trade: 'bg-blue-950/30 text-blue-500 border-blue-900/50',
 };
 
 export default function EconomicWarfare() {
@@ -24,27 +24,27 @@ export default function EconomicWarfare() {
   }, []);
 
   return (
-    <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 backdrop-blur">
-      <div className="flex items-center justify-between mb-3">
+    <div className="bg-[#060b18] border border-slate-800 p-3">
+      <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
         <div className="flex items-center gap-2">
-          <IndianRupee className="w-4 h-4 text-amber-400" />
-          <h3 className="text-xs font-bold text-white uppercase tracking-wider">Economic Warfare</h3>
+          <IndianRupee className="w-3.5 h-3.5 text-amber-500" />
+          <h3 className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.15em]">Economic Warfare</h3>
         </div>
-        <span className="text-[10px] text-slate-500">{signals.length}</span>
+        <span className="text-[9px] text-slate-500 tracking-widest">{signals.length} VECTORS</span>
       </div>
-      {signals.length === 0 && <div className="text-xs text-slate-500 animate-pulse">Fetching economic data...</div>}
-      <div className="space-y-2">
+      {signals.length === 0 && <div className="text-[10px] text-slate-500 animate-pulse tracking-widest">[ FETCHING ECON DATA... ]</div>}
+      <div className="space-y-1.5">
         {signals.map((s) => (
-          <div key={s.id} className="flex items-center gap-2.5 bg-slate-800/50 rounded-lg px-3 py-2 border border-slate-700/50 hover:border-slate-600 transition-colors cursor-pointer">
-            <div className="w-8 h-8 rounded-lg bg-slate-700/60 flex items-center justify-center flex-shrink-0">
-              <span className="text-xs font-bold text-amber-300">{s.severity}</span>
+          <div key={s.id} className="flex items-center gap-2.5 bg-slate-950 px-2 py-1.5 border border-slate-800/50 hover:bg-slate-900 transition-colors cursor-default">
+            <div className="w-6 h-6 border border-slate-800 bg-slate-900 flex items-center justify-center flex-shrink-0">
+              <span className="text-[9px] font-bold text-amber-500">{s.severity}</span>
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-xs text-white font-medium truncate">{s.label}</div>
+              <div className="text-[10px] text-slate-300 font-medium truncate uppercase tracking-wide">{s.label}</div>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className={`text-[9px] px-1.5 py-0.5 rounded border ${typeColors[s.type] || typeColors.trade}`}>{s.type}</span>
-                <span className="text-[10px] text-slate-500">{s.signals} signals →</span>
-                {s.source && <span className="text-[9px] text-slate-600">{s.source}</span>}
+                <span className={`text-[8px] tracking-widest px-1 py-0.5 border uppercase ${typeColors[s.type] || typeColors.trade}`}>{s.type}</span>
+                <span className="text-[9px] text-slate-500">[{s.signals} SIGNALS]</span>
+                {s.source && <span className="text-[8px] text-slate-600 uppercase tracking-wider">-- {s.source}</span>}
               </div>
             </div>
           </div>

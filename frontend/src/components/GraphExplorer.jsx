@@ -32,35 +32,39 @@ export default function GraphExplorer({ data }) {
             selector: 'node',
             style: {
               'label': 'data(label)',
-              'background-color': (ele) => typeColors[ele.data('type')] || '#6366f1',
-              'color': '#f1f5f9',
-              'font-size': '11px',
+              'background-color': '#0f172a',
+              'color': '#cbd5e1',
+              'font-size': '8px',
               'text-valign': 'bottom',
               'text-halign': 'center',
-              'width': 50,
-              'height': 50,
-              'border-width': 2,
-              'border-color': '#334155',
-              'text-margin-y': 8,
+              'width': 24,
+              'height': 24,
+              'shape': 'square',
+              'border-width': 1.5,
+              'border-color': (ele) => typeColors[ele.data('type')] || '#6366f1',
+              'border-style': 'solid',
+              'text-margin-y': 4,
               'text-outline-width': 2,
-              'text-outline-color': '#0f172a',
+              'text-outline-color': '#020617',
+              'text-transform': 'uppercase',
             }
           },
           {
             selector: 'edge',
             style: {
               'label': 'data(label)',
-              'width': 1.5,
-              'line-color': '#475569',
-              'target-arrow-color': '#64748b',
+              'width': 1,
+              'line-color': '#334155',
+              'target-arrow-color': '#475569',
               'target-arrow-shape': 'triangle',
               'curve-style': 'bezier',
-              'color': '#94a3b8',
-              'font-size': '9px',
+              'color': '#64748b',
+              'font-size': '7px',
               'text-rotation': 'autorotate',
               'text-background-opacity': 1,
-              'text-background-color': '#0f172a',
-              'text-background-padding': '3px',
+              'text-background-color': '#020617',
+              'text-background-padding': '2px',
+              'text-transform': 'uppercase',
             }
           },
           {
@@ -93,19 +97,19 @@ export default function GraphExplorer({ data }) {
   const edgeCount = data?.elements?.filter(e => e.data && e.data.source)?.length || 0;
 
   return (
-    <div className="w-full h-[500px] border border-slate-700 rounded-xl overflow-hidden relative shadow-xl bg-slate-900">
-      <div className="absolute top-3 left-3 z-10 bg-slate-950/80 backdrop-blur p-3 rounded-lg border border-slate-700 shadow-lg">
-        <h3 className="font-bold text-white text-sm">Knowledge Graph</h3>
-        <p className="text-[11px] text-slate-400 mt-0.5">{nodeCount} entities · {edgeCount} relations</p>
+    <div className="w-full h-[500px] border border-slate-800 bg-[#060b18] overflow-hidden relative">
+      <div className="absolute top-3 left-3 z-10 bg-black/80 backdrop-blur p-2 border border-slate-800">
+        <h3 className="font-bold text-slate-300 text-[10px] uppercase tracking-widest">KNOWLEDGE GRAPH</h3>
+        <p className="text-[9px] text-slate-500 tracking-widest mt-0.5">{nodeCount} NODES / {edgeCount} EDGES</p>
       </div>
-      <div className="absolute top-3 right-3 z-10 flex gap-1.5">
+      <div className="absolute top-3 right-3 z-10 flex gap-1.5 border border-slate-800 bg-black/80 px-2 py-1">
         {Object.entries({GPE:'#3b82f6',PERSON:'#f59e0b',ORG:'#10b981',LOC:'#ef4444'}).map(([k,v])=>(
-          <span key={k} className="text-[10px] px-2 py-0.5 rounded-full border border-slate-700 bg-slate-950/70 text-slate-300 flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full inline-block" style={{backgroundColor:v}}></span>{k}
+          <span key={k} className="text-[8px] text-slate-400 flex items-center gap-1 uppercase tracking-widest mr-1 last:mr-0">
+            <span className="w-1.5 h-1.5 border" style={{borderColor:v}}></span>{k}
           </span>
         ))}
       </div>
-      <div ref={containerRef} style={{ width: '100%', height: '100%', backgroundColor: '#0f172a' }} />
+      <div ref={containerRef} style={{ width: '100%', height: '100%', backgroundColor: '#020617' }} />
     </div>
   );
 }

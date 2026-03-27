@@ -176,11 +176,11 @@ export default function GeoMap() {
   }, [flights]);
 
   return (
-    <div className="border border-slate-700 rounded-xl overflow-hidden shadow-xl relative w-full h-full lg:min-h-[600px]">
-      <div className="absolute top-3 left-3 z-[1000] bg-slate-950/80 backdrop-blur p-2.5 rounded-lg border border-slate-700 shadow-lg pointer-events-auto">
-        <div className="flex items-center gap-1.5">
-          <MapPin className="w-3.5 h-3.5 text-red-400" />
-          <h3 className="font-bold text-white text-xs">Geopolitical Hotspots & Traffic</h3>
+    <div className="border border-slate-800 bg-[#060b18] overflow-hidden relative w-full h-full lg:min-h-[600px] z-0">
+      <div className="absolute top-3 left-3 z-[1000] bg-black/80 backdrop-blur p-2 border border-slate-800 pointer-events-auto">
+        <div className="flex items-center gap-1.5 pb-1 border-b border-slate-800">
+          <MapPin className="w-3.5 h-3.5 text-red-500" />
+          <h3 className="font-bold text-slate-300 text-[9px] tracking-widest uppercase">GEO-HOTSPOTS & TRAFFIC</h3>
         </div>
         <div className="flex gap-2 mt-1.5">
           {[['Conflict', '#ef4444'], ['Tension', '#f59e0b'], ['Diplomacy', '#3b82f6'], ['Air Traffic', '#f59e0b']].map(([l, c]) => (
@@ -193,9 +193,9 @@ export default function GeoMap() {
 
       {/* Selected Flight Card Overlay */}
       {selectedFlight && (
-        <div className="absolute top-3 right-3 z-[1000] w-72 bg-slate-950/95 backdrop-blur rounded-lg border border-emerald-900/50 shadow-2xl overflow-hidden font-mono text-xs flex flex-col pointer-events-auto">
+        <div className="absolute top-3 right-3 z-[1000] w-72 bg-[#060b18]/95 backdrop-blur border border-emerald-900 overflow-hidden font-mono text-xs flex flex-col pointer-events-auto">
           {/* Header */}
-          <div className="flex items-center justify-between p-2 border-b border-emerald-900/50 bg-slate-900/50">
+          <div className="flex items-center justify-between p-2 border-b border-emerald-900/50 bg-black/50">
             <div className="flex items-center gap-1.5 text-emerald-400">
               <Plane className="w-3.5 h-3.5 fill-current" />
               <span className="font-bold tracking-widest text-[10px]">FLIGHT DATA</span>
@@ -208,21 +208,21 @@ export default function GeoMap() {
           {/* Badges / Title */}
           <div className="p-3 pb-2">
             <div className="flex gap-1.5 mb-2">
-              <span className="px-1.5 py-0.5 bg-emerald-900/30 text-emerald-400 border border-emerald-800/50 rounded text-[9px]">
+              <span className="px-1.5 py-0.5 bg-emerald-950/50 text-emerald-500 border border-emerald-900/50 text-[9px] tracking-widest">
                 {selectedFlight.altitude ? `${Math.round(selectedFlight.altitude)}M` : 'UKN'}
               </span>
-              <span className="px-1.5 py-0.5 bg-sky-900/30 text-sky-400 border border-sky-800/50 rounded text-[9px]">
+              <span className="px-1.5 py-0.5 bg-sky-950/50 text-sky-500 border border-sky-900/50 text-[9px] tracking-widest">
                 {selectedFlight.velocity ? `${Math.round(selectedFlight.velocity * 3.6)} KM/H` : 'UKN'}
               </span>
               {selectedFlight.vertical_rate > 0 && (
-                <span className="px-1.5 py-0.5 bg-amber-900/30 text-amber-400 border border-amber-800/50 rounded text-[9px]">CLIMBING</span>
+                <span className="px-1.5 py-0.5 bg-amber-950/50 text-amber-500 border border-amber-900/50 text-[9px] tracking-widest">CLIMBING</span>
               )}
               {selectedFlight.vertical_rate < 0 && (
-                <span className="px-1.5 py-0.5 bg-rose-900/30 text-rose-400 border border-rose-800/50 rounded text-[9px]">DESCENDING</span>
+                <span className="px-1.5 py-0.5 bg-rose-950/50 text-rose-500 border border-rose-900/50 text-[9px] tracking-widest">DESCENDING</span>
               )}
             </div>
-            <h2 className="text-lg font-bold text-slate-100 uppercase tracking-wider">{selectedFlight.callsign && selectedFlight.callsign !== 'UNKNOWN' ? selectedFlight.callsign : `FLIGHT ${selectedFlight.icao24?.toUpperCase()}`}</h2>
-            <p className="text-slate-400 text-[10px] mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">{selectedFlight.origin_country}</p>
+            <h2 className="text-[14px] font-bold text-slate-100 uppercase tracking-[0.15em]">{selectedFlight.callsign && selectedFlight.callsign !== 'UNKNOWN' ? selectedFlight.callsign : `FLIGHT ${selectedFlight.icao24?.toUpperCase()}`}</h2>
+            <p className="text-slate-400 text-[9px] tracking-widest uppercase mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">{selectedFlight.origin_country}</p>
             <p className="text-slate-500 text-[9px] mt-1 space-x-2">
               <span>ICAO: {selectedFlight.icao24?.toUpperCase()}</span>
               <span>TRK: {Math.round(selectedFlight.true_track || 0)}°</span>
@@ -230,13 +230,13 @@ export default function GeoMap() {
           </div>
 
           {/* Image container */}
-          <div className="w-full h-36 bg-slate-900 border-y border-emerald-900/30 relative flex items-center justify-center">
+          <div className="w-full h-36 bg-black border-y border-emerald-900/50 relative flex items-center justify-center">
             {flightImage ? (
-              <img src={flightImage} alt="aircraft" className="w-full h-full object-cover" />
+              <img src={flightImage} alt="aircraft" className="w-full h-full object-cover opacity-80 mix-blend-luminosity hover:mix-blend-normal hover:opacity-100 transition-all" />
             ) : (
-              <div className="text-slate-600 flex flex-col items-center gap-2">
+              <div className="text-slate-700 flex flex-col items-center gap-2">
                 <Plane className="w-8 h-8 opacity-50" />
-                <span className="text-[9px]">NO IMAGE AVAILABLE</span>
+                <span className="text-[9px] tracking-widest">[ NO ASSET ACQUIRED ]</span>
               </div>
             )}
           </div>

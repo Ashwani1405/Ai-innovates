@@ -15,36 +15,36 @@ export default function InfrastructureCascade() {
   const [activeTab, setActiveTab] = React.useState('Cables');
 
   return (
-    <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 backdrop-blur">
-      <div className="flex items-center justify-between mb-3">
+    <div className="bg-[#060b18] border border-slate-800 p-3">
+      <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
         <div className="flex items-center gap-2">
-          <Cable className="w-4 h-4 text-emerald-400" />
-          <h3 className="text-xs font-bold text-white uppercase tracking-wider">Infrastructure Cascade</h3>
+          <Cable className="w-3.5 h-3.5 text-emerald-500" />
+          <h3 className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.15em]">Infrastructure Cascade</h3>
         </div>
-        <span className="text-[10px] text-slate-500">440</span>
+        <span className="text-[9px] text-slate-500 tracking-widest">440 TARGETS</span>
       </div>
 
       {/* Stats Row */}
-      <div className="flex items-center gap-3 mb-3 flex-wrap">
+      <div className="flex items-center gap-3 mb-3 flex-wrap border-b border-slate-800/50 pb-2">
         {INFRA.map((item) => (
           <div key={item.label} className="flex items-center gap-1">
             <item.icon className={`w-3 h-3 ${item.color}`} />
-            <span className="text-[10px] text-slate-300 font-medium">{item.count}</span>
+            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{item.count}</span>
           </div>
         ))}
-        <span className="text-[10px] text-slate-500">1453 links</span>
+        <span className="text-[9px] text-slate-500 tracking-widest">[ 1453 LINKS ]</span>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-3">
+      <div className="flex gap-1 mb-2">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
+            className={`text-[9px] px-2.5 py-1 uppercase tracking-widest font-bold transition-colors border ${
               activeTab === tab
-                ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
-                : 'text-slate-500 hover:text-slate-300 border border-transparent'
+                ? 'bg-indigo-950/50 text-indigo-400 border-indigo-900/50'
+                : 'bg-black text-slate-500 hover:text-slate-300 border-slate-800'
             }`}
           >
             {tab}
@@ -53,20 +53,20 @@ export default function InfrastructureCascade() {
       </div>
 
       {/* Content */}
-      <div className="bg-slate-800/40 rounded-lg p-3 border border-slate-700/50">
-        <div className="text-[10px] text-slate-500 mb-1.5">Active Threats in {activeTab}</div>
+      <div className="bg-slate-950 p-2.5 border border-slate-800">
+        <div className="text-[9px] text-slate-500 mb-2 uppercase tracking-widest border-b border-slate-800/50 pb-1">ACTIVE {activeTab} THREATS</div>
         <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-300">Mumbai-Chennai submarine link</span>
-            <span className="text-amber-400 text-[10px]">MONITORING</span>
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-wide">
+            <span className="text-slate-300">MUMBAI-CHENNAI SUBMARINE LINK</span>
+            <span className="text-amber-500 text-[9px] tracking-widest">[ MONITORING ]</span>
           </div>
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-300">Andaman-Nicobar trunk</span>
-            <span className="text-green-400 text-[10px]">SECURE</span>
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-wide">
+            <span className="text-slate-300">ANDAMAN-NICOBAR TRUNK</span>
+            <span className="text-emerald-500 text-[9px] tracking-widest">[ SECURE ]</span>
           </div>
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-300">Gujarat LNG pipeline</span>
-            <span className="text-red-400 text-[10px]">ALERT</span>
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-wide">
+            <span className="text-slate-300">GUJARAT LNG PIPELINE</span>
+            <span className="text-rose-500 text-[9px] tracking-widest animate-pulse">[ ALERT ]</span>
           </div>
         </div>
       </div>
