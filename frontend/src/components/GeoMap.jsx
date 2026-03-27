@@ -83,8 +83,10 @@ export default function GeoMap() {
       });
 
       const map = L.map(mapRef.current, { minZoom: 4 }).setView([22.5937, 78.9629], 5);
-      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri...',
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19,
       }).addTo(map);
 
       // India state detail data for hover cards
