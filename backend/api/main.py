@@ -4,6 +4,10 @@ from pydantic import BaseModel
 import sys
 import os
 import logging
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
