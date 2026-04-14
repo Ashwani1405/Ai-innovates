@@ -150,21 +150,19 @@ Base severity on actual news content. Return ONLY the JSON array."""
 
         return {"score": score, "trend": trend, "source": "computed"}
 
+    def _read_fallback(self, key: str, default=None):
+        try:
+            fallback_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Fallback.txt")
+            with open(fallback_path, "r", encoding="utf-8") as f:
+                return json.load(f).get(key, default if default is not None else [])
+        except Exception as e:
+            logger.error(f"Failed to read Fallback.txt for {key}: {e}")
+            return default if default is not None else []
+
     def _fallback_state_volatility(self) -> List[Dict]:
         """Fallback when LLM is unavailable — returns neutral scores backed by general knowledge."""
-        return [
-            {"name": "Jammu & Kashmir", "score": 65, "delta": 0, "u": 30, "c": 8, "s": 18, "i": 9},
-            {"name": "Manipur", "score": 58, "delta": -1, "u": 25, "c": 3, "s": 20, "i": 10},
-            {"name": "Punjab", "score": 35, "delta": 0, "u": 12, "c": 5, "s": 10, "i": 8},
-            {"name": "West Bengal", "score": 30, "delta": 0, "u": 10, "c": 4, "s": 6, "i": 10},
-            {"name": "Chhattisgarh", "score": 40, "delta": -1, "u": 20, "c": 2, "s": 12, "i": 6},
-        ]
+        return self._read_fallback("state_volatility")
 
     def _fallback_border_posture(self) -> List[Dict]:
         """Fallback border posture when LLM is unavailable."""
-        return [
-            {"name": "LAC – Ladakh / Arunachal", "severity": "HIGH", "trend": "stable", "linked": "China", "army": 4, "air": 2, "naval": 0},
-            {"name": "LOC – Kashmir", "severity": "HIGH", "trend": "stable", "linked": "Pakistan", "army": 5, "air": 2, "naval": 0},
-            {"name": "Indo-Myanmar Border", "severity": "MED", "trend": "stable", "linked": "Myanmar", "army": 2, "air": 0, "naval": 0},
-            {"name": "Indian Ocean Region", "severity": "MED", "trend": "stable", "linked": "IOR", "army": 0, "air": 1, "naval": 4},
-        ]
+        return self._read_fallback("border_posture")

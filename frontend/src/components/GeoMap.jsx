@@ -119,79 +119,96 @@ export default function GeoMap() {
         'Uttar Pradesh': { capital: 'Lucknow', pop: '231.5M', density: '829/km²', area: '240,928 km²' },
         'Uttarakhand': { capital: 'Dehradun', pop: '11.3M', density: '189/km²', area: '53,483 km²' },
         'West Bengal': { capital: 'Kolkata', pop: '99.6M', density: '1,029/km²', area: '88,752 km²' },
-        'Jammu and Kashmir': { capital: 'Srinagar', pop: '14.9M', density: '56/km²', area: '222,236 km²' },
-        'Ladakh': { capital: 'Leh', pop: '0.3M', density: '3/km²', area: '59,146 km²' },
+        'Jammu and Kashmir': { capital: 'Srinagar/Jammu', pop: '12.2M', density: '290/km²', area: '42,241 km²' },
+        'Ladakh': { capital: 'Leh/Kargil', pop: '0.3M', density: '3/km²', area: '59,146 km²' },
         'Delhi': { capital: 'New Delhi', pop: '20.0M', density: '11,320/km²', area: '1,484 km²' },
         'Chandigarh': { capital: 'Chandigarh', pop: '1.2M', density: '9,252/km²', area: '114 km²' },
       };
 
-      // Add India state borders with hover interaction
-      fetch('https://raw.githubusercontent.com/Subhash9325/GeoJson-Data-of-Indian-States/master/Indian_States')
+      // Tactical Boundary Data (Approximate LOC and LAC)
+      const locKashmir = [
+        [32.88, 74.88], [33.0, 74.4], [33.4, 74.2], [33.8, 74.0], [34.1, 74.0], [34.3, 73.8], [34.5, 73.9], [34.9, 74.2], [35.0, 75.0], [35.1, 76.0], [35.03, 77.01]
+      ];
+      
+      const lacLadakh = [
+        [35.5, 78.0], [35.0, 78.5], [34.5, 78.8], [34.2, 79.2], [34.0, 79.1], [33.5, 78.8], [33.0, 78.8], [32.5, 78.5]
+      ];
+
+      // Add India state borders with hover interaction (Updated to 2019+ GeoJSON)
+      fetch('https://raw.githubusercontent.com/india-in-data/india-states-2019/master/india_states.geojson')
         .then(res => res.json())
         .then(geoData => {
           L.geoJSON(geoData, {
             style: {
               color: '#38bdf8',
               weight: 1,
-              opacity: 0.35,
+              opacity: 0.2, // Lowered for sovereign border
               fillColor: '#0ea5e9',
-              fillOpacity: 0.03,
+              fillOpacity: 0.02,
               dashArray: '',
             },
             onEachFeature: (feature, layer) => {
-              const name = feature.properties.NAME_1 || feature.properties.name || feature.properties.NAME || feature.properties.ST_NM || 'Unknown';
+              const props = feature.properties;
+              const name = props.ST_NM || props.NAME_1 || props.name || props.NAME || 'Unknown';
               const info = stateData[name] || { capital: '--', pop: '--', density: '--', area: '--' };
               
               layer.on({
                 mouseover: (e) => {
                   const lyr = e.target;
                   lyr.setStyle({
-                    weight: 2.5,
+                    weight: 2,
                     color: '#38bdf8',
-                    opacity: 0.9,
-                    fillOpacity: 0.12,
+                    opacity: 0.8,
+                    fillOpacity: 0.1,
                   });
                   lyr.bringToFront();
-                  // Don't bring hotspot markers to back
                 },
                 mouseout: (e) => {
                   const lyr = e.target;
                   lyr.setStyle({
                     weight: 1,
                     color: '#38bdf8',
-                    opacity: 0.35,
-                    fillOpacity: 0.03,
+                    opacity: 0.2,
+                    fillOpacity: 0.02,
                   });
                 },
               });
 
               const popupContent = `
                 <div style="font-family: 'JetBrains Mono', monospace; min-width: 180px;">
-                  <div style="font-size: 12px; font-weight: 700; color: #f1f5f9; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid #1e293b; padding-bottom: 6px; margin-bottom: 8px;">${name}</div>
+                  <div style="font-size: 11px; font-weight: 700; color: #f1f5f9; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid #1e293b; padding-bottom: 6px; margin-bottom: 8px;">${name}</div>
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; font-size: 10px;">
-                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">Capital</div>
+                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Capital</div>
                     <div style="color: #e2e8f0; text-align: right; font-weight: 600;">${info.capital}</div>
-                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">Population</div>
+                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Population</div>
                     <div style="color: #e2e8f0; text-align: right; font-weight: 600;">${info.pop}</div>
-                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">Density</div>
-                    <div style="color: #e2e8f0; text-align: right; font-weight: 600;">${info.density}</div>
-                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">Area</div>
+                    <div style="color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Area (Admin)</div>
                     <div style="color: #e2e8f0; text-align: right; font-weight: 600;">${info.area}</div>
                   </div>
                 </div>
               `;
-              layer.bindPopup(popupContent, {
-                className: 'state-popup',
-                closeButton: false,
-                offset: [0, -5],
-              });
-              layer.on('mouseover', (e) => {
-                layer.openPopup(e.latlng);
-              });
-              layer.on('mouseout', () => {
-                layer.closePopup();
-              });
+              layer.bindPopup(popupContent, { className: 'state-popup', closeButton: false, offset: [0, -5] });
+              layer.on('mouseover', (e) => layer.openPopup(e.latlng));
+              layer.on('mouseout', () => layer.closePopup());
             }
+          }).addTo(map);
+
+          // Draw Tactical LoC
+          L.polyline(locKashmir, {
+            color: '#ef4444',
+            weight: 2,
+            opacity: 0.8,
+            dashArray: '5, 8',
+            interactive: false
+          }).addTo(map);
+
+          // Draw Tactical LAC
+          L.polyline(lacLadakh, {
+            color: '#f59e0b',
+            weight: 2,
+            opacity: 0.8,
+            dashArray: '5, 8',
+            interactive: false
           }).addTo(map);
         })
         .catch(err => console.error('Failed to load Indian borders:', err));

@@ -1,0 +1,227 @@
+.intro-overlay {
+  animation: fadeOutOverlay 1s ease-in-out 7s forwards;
+  position: relative;
+  background-color: #020205;
+  /* Tactical Grid & Nebula background */
+  background-image: 
+    linear-gradient(rgba(29, 78, 216, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 78, 216, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center;
+}
+
+/* Moving Nebula Effect */
+.intro-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(29, 78, 216, 0.15), transparent 50%),
+              radial-gradient(circle at 20% 80%, rgba(15, 23, 42, 0.4), transparent 40%),
+              radial-gradient(circle at 80% 20%, rgba(30, 41, 59, 0.4), transparent 40%);
+  z-index: 0;
+  filter: blur(60px);
+  animation: nebulaDrift 15s ease-in-out infinite alternate;
+}
+
+@keyframes nebulaDrift {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.1) translate(2%, 2%); }
+}
+
+@keyframes fadeOutOverlay {
+  0% { opacity: 1; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+/* ──────────────── Particles & Depth ───────────────── */
+.particles-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: var(--size, 2px);
+  height: var(--size, 2px);
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0.2;
+  box-shadow: 0 0 10px #fff;
+  animation: particleFloat var(--duration, 10s) linear infinite;
+}
+
+@keyframes particleFloat {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  20% { opacity: var(--max-opacity, 0.4); }
+  80% { opacity: var(--max-opacity, 0.4); }
+  100% { transform: translateY(-100vh) translateX(var(--drift, 50px)); opacity: 0; }
+}
+
+/* ──────────────── Scanlines Overlay ───────────────── */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.1) 50%
+  );
+  background-size: 100% 4px;
+  opacity: 0.15;
+}
+
+/* ──────────────── Main Card ──────────────────────── */
+.outer {
+  width: 90vw;
+  max-width: 800px;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  border-radius: 2px;
+  padding: 1px;
+  background: radial-gradient(circle 500px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.8), #0c0d0d);
+  position: relative;
+  box-shadow: 0 50px 200px -20px rgba(0,0,0,1);
+  transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+  z-index: 5;
+}
+
+.card {
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 1px;
+  border: solid 1px rgba(255, 255, 255, 0.03);
+  background: radial-gradient(circle 400px at var(--mouse-x, 50%) var(--mouse-y, 50%), #11111a, #030305);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-direction: column;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: inset 0 0 150px rgba(0,0,0,1);
+}
+
+/* Dual Dynamic Rays */
+.ray, .ray-2 {
+  border-radius: 50%;
+  position: absolute;
+  opacity: 0.05;
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.ray {
+  width: 500px;
+  height: 100px;
+  background-color: #fff;
+  box-shadow: 0 0 150px #fff;
+  top: -10%;
+  left: -20%;
+  transform: rotate(45deg);
+  animation: sweepRay 10s ease-in-out infinite alternate;
+}
+
+.ray-2 {
+  width: 400px;
+  height: 80px;
+  background-color: #0ea5e9;
+  box-shadow: 0 0 100px #0ea5e9;
+  bottom: -10%;
+  right: -20%;
+  transform: rotate(-135deg);
+  animation: sweepRay2 12s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes sweepRay {
+  0% { transform: rotate(35deg) translate(-20%, -10%); opacity: 0.03; }
+  100% { transform: rotate(55deg) translate(10%, 10%); opacity: 0.1; }
+}
+
+@keyframes sweepRay2 {
+  0% { transform: rotate(-120deg) translate(-10%, -10%); opacity: 0.01; }
+  100% { transform: rotate(-150deg) translate(10%, 10%); opacity: 0.08; }
+}
+
+/* ──────────────── Sequential Reveal ──────────────── */
+.word {
+  opacity: 1; /* Force initial visibility */
+  display: block;
+  animation: wordReveal 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.word-1 { animation-delay: 0.2s; }
+.word-2 { animation-delay: 0.5s; }
+.word-3 { animation-delay: 0.8s; }
+
+@keyframes wordReveal {
+  0% { transform: translateY(30px) scale(0.98); opacity: 0; filter: blur(5px); }
+  100% { transform: translateY(0) scale(1); opacity: 1; filter: blur(0); }
+}
+
+.card .fancy-text {
+  font-weight: 900;
+  font-size: clamp(1.4rem, 6vw, 3.8rem);
+  color: #ffffff; /* FORCE SOLID WHITE - NO TRANSPARENCY */
+  letter-spacing: 0.4em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  text-shadow: 0 10px 30px rgba(255,255,255,0.2), 0 20px 40px rgba(0,0,0,0.5);
+  z-index: 50;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .outer {
+    aspect-ratio: 1 / 1.1;
+    width: 85vw;
+  }
+  .card .fancy-text {
+    letter-spacing: 0.25em;
+  }
+}
+
+@media (max-width: 480px) {
+  .outer {
+    aspect-ratio: 1 / 1.4;
+    width: 95vw;
+  }
+  .card .fancy-text {
+    letter-spacing: 0.15em;
+  }
+}
+
+/* ──────────────── Grid/Line Overlays ──────────────── */
+.line {
+  width: 100%;
+  height: 1px;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+.topl { top: 8%; background: linear-gradient(90deg, transparent, rgba(255, 153, 51, 0.1), transparent); }
+.bottoml { bottom: 8%; background: linear-gradient(90deg, transparent, rgba(19, 136, 8, 0.1), transparent); }
+.leftl { left: 8%; width: 1px; height: 100%; }
+.rightl { right: 8%; width: 1px; height: 100%; }
+
+/* ──────────────── Navigation Dot ─────────────────── */
+.dot {
+  width: 3px;
+  aspect-ratio: 1;
+  position: absolute;
+  background-color: #fff;
+  box-shadow: 0 0 20px #ffffff;
+  border-radius: 50%;
+  z-index: 50;
+  animation: moveDot 12s linear infinite;
+}
+
+@keyframes moveDot {
+  0%, 100% { top: 8%; left: 8%; }
+  25% { top: 8%; left: 92%; }
+  50% { top: 92%; left: 92%; }
+  75% { top: 92%; left: 8%; }
+}

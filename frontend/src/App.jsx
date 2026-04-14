@@ -12,11 +12,20 @@ import StateVolatility from './components/StateVolatility'
 import InfrastructureCascade from './components/InfrastructureCascade'
 import EconomicWarfare from './components/EconomicWarfare'
 import DisasterMonitor from './components/DisasterMonitor'
+import IntroScreen from './components/IntroScreen'
 
 function App() {
   const [graphData, setGraphData] = useState({ elements: [] });
   const [graphLoading, setGraphLoading] = useState(true);
   const [isTvOpen, setIsTvOpen] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowIntro(false);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     fetch(`${API_BASE}/graph`)
@@ -27,6 +36,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-300 flex flex-col font-mono selection:bg-indigo-500/30">
+      {showIntro && <IntroScreen />}
       {/* Header */}
       <header className="px-4 py-2 bg-[#020617] border-b border-slate-800/80 flex justify-between items-center z-50 sticky top-0">
         <div className="flex items-center gap-3">

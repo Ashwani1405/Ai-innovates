@@ -16,6 +16,8 @@ services:
       - QDRANT_URL=http://qdrant:6333
       - POSTGRES_URI=postgresql://goe_user:goe_password@postgres:5432/goe_db
       - REDIS_URL=redis://redis:6379
+      - OPENSKY_CLIENT_ID=${OPENSKY_CLIENT_ID}
+      - OPENSKY_CLIENT_SECRET=${OPENSKY_CLIENT_SECRET}
     depends_on:
       - neo4j
       - qdrant

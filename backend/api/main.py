@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import sys
 import os
+import json
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -15,11 +16,16 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 app = FastAPI(title="Global Ontology Engine API")
 
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -51,6 +57,16 @@ def _get_reader():
         from graph.neo4j_query import Neo4jReader
         _reader = Neo4jReader()
     return _reader
+
+# ── Fallback Helper ──────────────────────────────
+def _read_fallback(key, default=None):
+    try:
+        fallback_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Fallback.txt")
+        with open(fallback_path, "r", encoding="utf-8") as f:
+            return json.load(f).get(key, default if default is not None else [])
+    except Exception as e:
+        logger.error(f"Failed to read Fallback.txt for {key}: {e}")
+        return default if default is not None else []
 
 # ── Endpoints ────────────────────────────────────
 
@@ -161,19 +177,7 @@ def live_events():
 @app.get("/geo")
 def geo_events():
     """Returns geopolitical hotspot coordinates for the map."""
-    # Curated geopolitical hotspots for MVP map display
-    hotspots = [
-        {"lat": 34.5, "lng": 78.0, "label": "LAC / Ladakh", "type": "conflict", "desc": "India-China border tensions"},
-        {"lat": 48.5, "lng": 37.5, "label": "Eastern Ukraine", "type": "conflict", "desc": "Russia-Ukraine conflict zone"},
-        {"lat": 25.3, "lng": 51.5, "label": "Qatar / Gulf", "type": "diplomacy", "desc": "GCC diplomatic activity"},
-        {"lat": 38.9, "lng": 125.7, "label": "Korean Peninsula", "type": "conflict", "desc": "DPRK missile activity"},
-        {"lat": 23.5, "lng": 121.0, "label": "Taiwan Strait", "type": "tension", "desc": "US-China strategic competition"},
-        {"lat": 9.0, "lng": 7.5, "label": "Nigeria / Sahel", "type": "conflict", "desc": "Sahel insurgency corridor"},
-        {"lat": 33.9, "lng": 35.5, "label": "Lebanon / Levant", "type": "tension", "desc": "Hezbollah-Israel tensions"},
-        {"lat": 15.4, "lng": 44.2, "label": "Yemen / Red Sea", "type": "conflict", "desc": "Houthi Red Sea disruptions"},
-        {"lat": 28.6, "lng": 77.2, "label": "New Delhi", "type": "diplomacy", "desc": "Indian foreign policy hub"},
-        {"lat": 39.9, "lng": 116.4, "label": "Beijing", "type": "diplomacy", "desc": "Chinese strategic command"},
-    ]
+    hotspots = _read_fallback("geo_hotspots")
     return {"hotspots": hotspots}
 
 @app.get("/air-traffic")
@@ -187,8 +191,8 @@ def air_traffic():
         token_url = "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token"
         token_res = requests.post(token_url, headers=ua_headers, data={
             "grant_type": "client_credentials",
-            "client_id": "jha.ashwanikumar006@gmail.com-api-client",
-            "client_secret": "K05V5SLVobGgVYi9Dlf7BlXezrgST0Z1"
+            "client_id": os.getenv("OPENSKY_CLIENT_ID"),
+            "client_secret": os.getenv("OPENSKY_CLIENT_SECRET")
         }, timeout=15)
 
         if token_res.status_code != 200:
@@ -312,35 +316,4 @@ def risk_score():
 
 def _demo_graph_elements():
     """Fallback demo graph if Neo4j has no data."""
-    nodes = [
-        {"data": {"id": "India", "label": "India", "type": "GPE"}},
-        {"data": {"id": "China", "label": "China", "type": "GPE"}},
-        {"data": {"id": "USA", "label": "USA", "type": "GPE"}},
-        {"data": {"id": "Russia", "label": "Russia", "type": "GPE"}},
-        {"data": {"id": "Pakistan", "label": "Pakistan", "type": "GPE"}},
-        {"data": {"id": "NATO", "label": "NATO", "type": "ORG"}},
-        {"data": {"id": "BRICS", "label": "BRICS", "type": "ORG"}},
-        {"data": {"id": "LAC Border", "label": "LAC Border", "type": "LOC"}},
-        {"data": {"id": "Taiwan Strait", "label": "Taiwan Strait", "type": "LOC"}},
-        {"data": {"id": "Modi", "label": "Modi", "type": "PERSON"}},
-        {"data": {"id": "Xi Jinping", "label": "Xi Jinping", "type": "PERSON"}},
-        {"data": {"id": "Ukraine", "label": "Ukraine", "type": "GPE"}},
-    ]
-    edges = [
-        {"data": {"source": "India", "target": "China", "label": "border tensions"}},
-        {"data": {"source": "India", "target": "LAC Border", "label": "disputes at"}},
-        {"data": {"source": "China", "target": "LAC Border", "label": "claims over"}},
-        {"data": {"source": "USA", "target": "China", "label": "strategic rivalry"}},
-        {"data": {"source": "USA", "target": "Taiwan Strait", "label": "naval presence"}},
-        {"data": {"source": "China", "target": "Taiwan Strait", "label": "military drills"}},
-        {"data": {"source": "Russia", "target": "Ukraine", "label": "conflict"}},
-        {"data": {"source": "USA", "target": "NATO", "label": "leads"}},
-        {"data": {"source": "India", "target": "BRICS", "label": "member"}},
-        {"data": {"source": "China", "target": "BRICS", "label": "member"}},
-        {"data": {"source": "Russia", "target": "BRICS", "label": "member"}},
-        {"data": {"source": "Modi", "target": "India", "label": "leads"}},
-        {"data": {"source": "Xi Jinping", "target": "China", "label": "leads"}},
-        {"data": {"source": "India", "target": "Pakistan", "label": "ongoing tensions"}},
-        {"data": {"source": "China", "target": "Pakistan", "label": "strategic ally"}},
-    ]
-    return nodes + edges
+    return _read_fallback("demo_graph_elements")
